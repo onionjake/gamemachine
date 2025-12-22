@@ -10,14 +10,23 @@ set -ouex pipefail
 # https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
 
 # this installs a package from fedora repos
-dnf5 install -y tmux 
+dnf5 install -y tmux
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
+# Install Ruby and GTK3 bindings for my-little-eye
+dnf5 install -y rubygem-gtk3
+
+#### Install my-little-eye screen monitoring service
+
+# Install the script to immutable /usr tree
+cp /ctx/my-little-eye /usr/libexec/my-little-eye
+chmod +x /usr/libexec/my-little-eye
+
+# Install the user service file
+mkdir -p /etc/systemd/user
+cp /ctx/my-little-eye.service /etc/systemd/user/my-little-eye.service
+
+# Enable the service globally for all users
+systemctl --global enable my-little-eye.service
 
 #### Example for enabling a System Unit File
 
